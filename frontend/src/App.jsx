@@ -123,13 +123,13 @@ function LoginPage({ onLogin }) {
         <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-12 shadow-2xl backdrop-blur-md">
           <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/5 px-4 py-2 text-xs font-semibold text-blue-300 tracking-wider uppercase">
             <ShieldCheck className="h-4 w-4" />
-            Continuous Identity Trust Platform
+            Enterprise Security Guard (ESG)
           </div>
           <h1 className="max-w-xl text-4xl font-bold leading-tight text-white md:text-5xl tracking-tight">
-            TrustSphere AI for digital banking
+            TrustSphere Security Guard
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-300 font-medium">
-            Verify continuously, trust intelligently. This platform scores device, location,
+            Continuous identity verification and fraud mitigation. This platform scores device, location,
             session, transaction, and behavioral signals before a payment is released.
           </p>
           <div className="mt-10 grid gap-3 text-xs font-bold text-slate-300 sm:grid-cols-3">
@@ -314,10 +314,10 @@ function Dashboard() {
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-300">
             <ShieldCheck className="h-4 w-4" />
-            TrustSphere AI
+            TrustSphere ESG
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Continuous Identity Trust Command Center</h1>
-          <p className="mt-1.5 text-sm font-semibold text-slate-300">Verify Continuously, Trust Intelligently.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Real-Time Transaction Risk Engine</h1>
+          <p className="mt-1.5 text-sm font-semibold text-slate-300">Continuous Identity Verification & Fraud Mitigation.</p>
         </div>
         <div className="flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/[0.03] p-3.5 pr-5 backdrop-blur-md">
           <div className="rounded-full bg-blue-500/20 border border-blue-500/25 p-2.5 text-blue-300 font-bold w-11 h-11 flex items-center justify-center shadow-inner">
@@ -551,11 +551,11 @@ function Dashboard() {
               value={result?.location_risk_indicator ?? "Low"}
             />
             <StatCard
-              helper={`AI anomaly score: ${result?.anomaly_score ?? 0}`}
+              helper={`Drift score: ${result?.anomaly_score ?? 0}`}
               icon={Activity}
-              title="AI Anomaly"
+              title="Behavioral Heuristics"
               tone={result?.anomaly_detected ? "red" : "blue"}
-              value={result?.anomaly_detected ? "Anomaly" : "Normal"}
+              value={result?.anomaly_detected ? "Drift" : "Baseline"}
             />
           </div>
 
@@ -564,7 +564,7 @@ function Dashboard() {
             <div>
               <div className="mb-4">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Live Evaluation</p>
-                <h3 className="text-xl font-bold tracking-tight mt-1">Trust Score</h3>
+                <h3 className="text-xl font-bold tracking-tight mt-1">Security Score</h3>
               </div>
               <ScoreMeter score={score} riskLevel={riskLevel} />
             </div>
@@ -572,7 +572,7 @@ function Dashboard() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm font-bold text-blue-300">
                 <Fingerprint className="h-4 w-4" />
-                <span>Explainable AI Engine</span>
+                <span>Rule Evaluation Engine</span>
               </div>
               <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 flex justify-between items-center text-xs">
                 <div>
@@ -581,12 +581,12 @@ function Dashboard() {
                 </div>
                 {result?.anomaly_detected ? (
                   <div className="text-right text-red-400 font-bold border border-red-500/20 bg-red-500/5 px-2.5 py-1.5 rounded-lg">
-                    Behavior Anomaly
+                    Heuristic Drift
                   </div>
                 ) : null}
               </div>
               <div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Decision Logic & Reasons</p>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Active Security Alerts</p>
                 <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
                   {reasonList.map((reason) => (
                     <li className="rounded-xl border border-white/5 bg-white/[0.015] p-2.5 text-xs font-semibold text-slate-300 leading-normal flex items-start gap-2" key={reason}>
@@ -595,6 +595,11 @@ function Dashboard() {
                     </li>
                   ))}
                 </ul>
+                  {result?.anomaly_detected ? (
+                <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-xs font-bold text-red-200 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                  Warning: Session heuristic parameters exceed normal user baseline profiles.
+                </div>
+              ) : null}
               </div>
             </div>
           </div>
@@ -604,7 +609,7 @@ function Dashboard() {
             <div className="flex items-center gap-2">
               <LineChart className="h-5 w-5 text-blue-400" />
               <div>
-                <h2 className="text-xl font-bold tracking-tight">Fraud Analytics Dashboard</h2>
+                <h2 className="text-xl font-bold tracking-tight">Historical Risk Vectors</h2>
               </div>
             </div>
 

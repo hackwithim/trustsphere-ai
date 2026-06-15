@@ -41,7 +41,7 @@ def seed_demo_data(db: Session) -> None:
                 session_status="Normal Session",
                 anomaly_detected=False,
                 anomaly_score=0.08,
-                reasons=["Known device, known location, and normal banking behavior"],
+                reasons=["[SEC-OK-00] Session parameters aligned with baseline user profile"],
                 deductions=[],
                 transaction_amount=amount,
                 beneficiary_name=beneficiary,

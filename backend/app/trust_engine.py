@@ -72,28 +72,28 @@ def evaluate_trust(
         reasons.append(label)
 
     if device.new_device:
-        add("New Device Detected", 20, "device")
+        add("[SEC-DEV-10] Unrecognized Device Signature", 20, "device")
     if device.rooted_device:
-        add("Rooted Device Detected", 25, "device")
+        add("[SEC-DEV-12] Host OS Integrity Check Failed (Root/Jailbreak)", 25, "device")
     if device.unknown_browser:
-        add("Unknown Browser Fingerprint", 10, "device")
+        add("[SEC-DEV-15] Mismatched User-Agent Fingerprint", 10, "device")
 
     location_label, location_risk = location_status(location)
     if location.location != "Pune":
-        add("New Location Detected", 15, "location")
+        add("[SEC-LOC-20] Unregistered Access Location", 15, "location")
     if location.location == "Singapore":
-        add("Drastic Location Change", 10, "location")
+        add("[SEC-LOC-22] Velocity Threshold Exceeded (Geodistance Warning)", 10, "location")
 
     if session.login_time <= 5 or session.login_time >= 23:
-        add("Unusual Login Time", 10, "session")
+        add("[SEC-SES-30] Out-of-Hours Session Initialized", 10, "session")
     if session.session_duration_minutes >= 90:
-        add("Long Session Duration", 5, "session")
+        add("[SEC-SES-32] Extended Idle Session Lifetime Limit Exceeded", 5, "session")
 
     amount = transaction.amount if transaction else 0
     if transaction and transaction.amount >= 100000:
-        add("High Transaction Amount", 25, "transaction")
+        add("[SEC-TXN-40] Transaction Value Exceeds Normal Profile Threshold", 25, "transaction")
     if transaction and transaction.new_beneficiary:
-        add("New Beneficiary", 15, "transaction")
+        add("[SEC-TXN-42] First-Time Beneficiary Account", 15, "transaction")
 
     anomaly = get_detector().evaluate(
         login_time=session.login_time,
@@ -101,7 +101,7 @@ def evaluate_trust(
         session_duration_minutes=session.session_duration_minutes,
     )
     if anomaly["anomaly_detected"]:
-        add("Behavioral Anomaly Detected", 20, "ai")
+        add("[SEC-BEH-50] Dynamic Behavioral Profile Outlier (Pattern Drift)", 20, "ai")
 
     score = max(0, 100 - sum(item.points for item in deductions))
     level = risk_level(score)
@@ -116,7 +116,7 @@ def evaluate_trust(
         "location_risk_indicator": location_risk,
         "action": action,
         "recommended_action": action,
-        "reasons": reasons or ["Known device, known location, and normal banking behavior"],
+        "reasons": reasons or ["[SEC-OK-00] Session parameters aligned with baseline user profile"],
         "deductions": deductions,
         "anomaly_detected": anomaly["anomaly_detected"],
         "anomaly_score": anomaly["anomaly_score"],
