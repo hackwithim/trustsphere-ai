@@ -331,80 +331,203 @@ function Dashboard() {
       </header>
 
       <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+        {/* Left Column: Simulation Console */}
         <section className="space-y-6">
-          <div className="glass-card p-6">
-            <div className="mb-6 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Live Trust Evaluation</p>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight">Current Session</h2>
-              </div>
-              <span className="rounded-full bg-white/5 border border-white/10 px-3.5 py-1 text-xs font-bold text-slate-200">
-                Action: {result?.action ?? "Allow"}
-              </span>
+          <div className="glass-card p-6 space-y-6">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Simulate Risk Signals</p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight">Simulation Console</h2>
             </div>
-            <ScoreMeter score={score} riskLevel={riskLevel} />
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Device</p>
-                <p className="mt-2 font-bold text-white text-base">{result?.device_status ?? "Trusted"}</p>
-              </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Location</p>
-                <p className="mt-2 font-bold text-white text-base">{result?.location_status ?? "Known Location"}</p>
-              </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Session</p>
-                <p className="mt-2 font-bold text-white text-base">{result?.session_status ?? "Normal Session"}</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="glass-card p-5">
-            <div className="mb-5 flex items-center gap-3">
-              <Smartphone className="h-5 w-5 text-blue-400" />
-              <h2 className="text-xl font-bold tracking-tight">Device Intelligence</h2>
-            </div>
-            <div className="grid gap-3.5">
-              {[
-                ["new_device", "New Device Detected"],
-                ["rooted_device", "Rooted / Jailbroken Device"],
-                ["unknown_browser", "Unknown Browser Fingerprint"],
-              ].map(([key, label]) => (
-                <label className="control-label" key={key}>
-                  <span className="text-sm font-semibold text-slate-300">{label}</span>
+            {/* Section 1: Transaction Simulation */}
+            <div className="border-t border-white/5 pt-5 space-y-4">
+              <div className="flex items-center gap-2 text-sm font-bold text-blue-300">
+                <CreditCard className="h-4 w-4" />
+                <span>Transaction Details</span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Beneficiary Name</span>
                   <input
-                    checked={device[key]}
-                    type="checkbox"
-                    onChange={(event) => setDevice((current) => ({ ...current, [key]: event.target.checked }))}
+                    className="field"
+                    value={transaction.beneficiary_name}
+                    onChange={(event) =>
+                      setTransaction((current) => ({ ...current, beneficiary_name: event.target.value }))
+                    }
                   />
                 </label>
-              ))}
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Amount (INR)</span>
+                  <input
+                    className="field"
+                    min="1"
+                    type="number"
+                    value={transaction.amount}
+                    onChange={(event) =>
+                      setTransaction((current) => ({ ...current, amount: Number(event.target.value) }))
+                    }
+                  />
+                </label>
+              </div>
+              <label className="control-label">
+                <span className="text-sm font-semibold text-slate-300">New Beneficiary Account</span>
+                <input
+                  checked={transaction.new_beneficiary}
+                  type="checkbox"
+                  onChange={(event) =>
+                    setTransaction((current) => ({ ...current, new_beneficiary: event.target.checked }))
+                  }
+                />
+              </label>
             </div>
-            <div className="mt-5 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs font-bold text-slate-300 flex justify-between">
-              <span>Device Trust Status:</span>
-              <span className="text-white uppercase tracking-wider">{result?.device_status ?? "Trusted"}</span>
-            </div>
-          </div>
 
-          <div className="glass-card p-5">
-            <div className="mb-5 flex items-center gap-3">
-              <MapPin className="h-5 w-5 text-blue-400" />
-              <h2 className="text-xl font-bold tracking-tight">Location Intelligence</h2>
+            {/* Section 2: Device Intelligence */}
+            <div className="border-t border-white/5 pt-5 space-y-4">
+              <div className="flex items-center gap-2 text-sm font-bold text-blue-300">
+                <Smartphone className="h-4 w-4" />
+                <span>Device Intelligence</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {[
+                  ["new_device", "New Device"],
+                  ["rooted_device", "Rooted Device"],
+                  ["unknown_browser", "Unknown Browser"],
+                ].map(([key, label]) => (
+                  <label className="control-label flex-col items-start p-3 gap-2" key={key}>
+                    <span className="text-xs font-bold text-slate-300">{label}</span>
+                    <input
+                      checked={device[key]}
+                      type="checkbox"
+                      onChange={(event) => setDevice((current) => ({ ...current, [key]: event.target.checked }))}
+                    />
+                  </label>
+                ))}
+              </div>
             </div>
-            <select className="field cursor-pointer" value={location} onChange={(event) => setLocation(event.target.value)}>
-              <option>Pune</option>
-              <option>Mumbai</option>
-              <option>Delhi</option>
-              <option>Singapore</option>
-            </select>
-            <div className="mt-5 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs font-bold text-slate-300 flex justify-between">
-              <span>Location Risk Indicator:</span>
-              <span className="text-white uppercase tracking-wider">{result?.location_risk_indicator ?? "Low"}</span>
+
+            {/* Section 3: Location Intelligence */}
+            <div className="border-t border-white/5 pt-5 space-y-4">
+              <div className="flex items-center gap-2 text-sm font-bold text-blue-300">
+                <MapPin className="h-4 w-4" />
+                <span>Location Intelligence</span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 items-center">
+                <select className="field cursor-pointer" value={location} onChange={(event) => setLocation(event.target.value)}>
+                  <option>Pune</option>
+                  <option>Mumbai</option>
+                  <option>Delhi</option>
+                  <option>Singapore</option>
+                </select>
+                <div className="rounded-xl border border-white/5 bg-white/[0.015] p-3.5 text-xs font-bold text-slate-300 flex justify-between">
+                  <span>Location Risk:</span>
+                  <span className="text-white font-extrabold uppercase tracking-wider">{result?.location_risk_indicator ?? "Low"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 4: Session & Behavioral Intelligence */}
+            <div className="border-t border-white/5 pt-5 space-y-5">
+              <div className="flex items-center justify-between text-sm font-bold text-blue-300">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  <span>Session & Behavioral Settings</span>
+                </div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                  Risk Points: {transactionRisk ? `${transactionRisk} pts` : "Normal"}
+                </span>
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <label className="flex flex-col gap-2 p-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-300">
+                    <span className="whitespace-nowrap">Login Time</span>
+                    <code className="text-blue-300 font-bold">{session.login_time}:00</code>
+                  </div>
+                  <input
+                    max="23"
+                    min="0"
+                    type="range"
+                    value={session.login_time}
+                    onChange={(event) => setSession((current) => ({ ...current, login_time: Number(event.target.value) }))}
+                  />
+                </label>
+                <label className="flex flex-col gap-2 p-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-300">
+                    <span className="whitespace-nowrap">Session Duration</span>
+                    <code className="text-blue-300 font-bold">{session.session_duration_minutes} min</code>
+                  </div>
+                  <input
+                    max="180"
+                    min="1"
+                    type="range"
+                    value={session.session_duration_minutes}
+                    onChange={(event) =>
+                      setSession((current) => ({ ...current, session_duration_minutes: Number(event.target.value) }))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Scenario Quick-Select & Trigger Buttons */}
+            <div className="border-t border-white/5 pt-5 space-y-4">
+              <button
+                className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-4 font-bold text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_20px_rgba(31,111,235,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-2"
+                disabled={loading}
+                onClick={() => evaluate(payload, { interactive: true, alert: true })}
+                type="button"
+              >
+                <Lock className="h-4 w-4" />
+                {loading ? "Evaluating Trust Score..." : "Evaluate Secure Transfer"}
+              </button>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <button
+                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] transition-all hover:border-emerald-500/25 text-center cursor-pointer"
+                  onClick={() => applyScenario("normal")}
+                >
+                  <span className="text-xs font-bold text-emerald-400">Normal</span>
+                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 5k (Allow)</span>
+                </button>
+                <button
+                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-500/15 bg-amber-500/5 hover:bg-amber-500/10 transition-all hover:border-amber-500/30 text-center cursor-pointer"
+                  onClick={() => applyScenario("suspicious")}
+                >
+                  <span className="text-xs font-bold text-amber-400">Suspicious</span>
+                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 500k (OTP)</span>
+                </button>
+                <button
+                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-red-500/15 bg-red-500/5 hover:bg-red-500/10 transition-all hover:border-red-500/30 text-center cursor-pointer"
+                  onClick={() => applyScenario("critical")}
+                >
+                  <span className="text-xs font-bold text-red-400">Critical</span>
+                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 1M (Block)</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Right Column: Decision & Live Analytics */}
         <section className="space-y-6">
+          {/* Action Alert Banner */}
+          {alert ? (
+            <div className={`rounded-xl border p-4 shadow-sm transition-all duration-500 ${alert.tone}`}>
+              <div className="flex items-start gap-3">
+                {alert.title === "Transaction Approved" ? (
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                ) : (
+                  <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                )}
+                <div>
+                  <p className="font-bold text-sm">{alert.title}</p>
+                  <p className="mt-1 text-xs font-medium opacity-90 leading-relaxed">{alert.body}</p>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Stat Cards Grid */}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               helper={riskLevel}
@@ -430,180 +553,64 @@ function Dashboard() {
             <StatCard
               helper={`AI anomaly score: ${result?.anomaly_score ?? 0}`}
               icon={Activity}
-              title="AI Anomaly Detection"
+              title="AI Anomaly"
               tone={result?.anomaly_detected ? "red" : "blue"}
               value={result?.anomaly_detected ? "Anomaly" : "Normal"}
             />
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="glass-card p-5">
-              <div className="mb-5 flex items-center gap-3">
-                <CreditCard className="h-5 w-5 text-blue-400" />
-                <h2 className="text-xl font-bold tracking-tight">Transaction Simulation</h2>
+          {/* Main live evaluation card (ScoreMeter + Explainable AI) */}
+          <div className="glass-card p-6 grid gap-6 md:grid-cols-[0.85fr_1.15fr] items-center">
+            <div>
+              <div className="mb-4">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Live Evaluation</p>
+                <h3 className="text-xl font-bold tracking-tight mt-1">Trust Score</h3>
               </div>
-              <div className="grid gap-4">
-                <label>
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Beneficiary Name</span>
-                  <input
-                    className="field"
-                    value={transaction.beneficiary_name}
-                    onChange={(event) =>
-                      setTransaction((current) => ({ ...current, beneficiary_name: event.target.value }))
-                    }
-                  />
-                </label>
-                <label>
-                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Amount (INR)</span>
-                  <input
-                    className="field"
-                    min="1"
-                    type="number"
-                    value={transaction.amount}
-                    onChange={(event) =>
-                      setTransaction((current) => ({ ...current, amount: Number(event.target.value) }))
-                    }
-                  />
-                </label>
-                <label className="control-label">
-                  <span className="text-sm font-semibold text-slate-300">New Beneficiary Account</span>
-                  <input
-                    checked={transaction.new_beneficiary}
-                    type="checkbox"
-                    onChange={(event) =>
-                      setTransaction((current) => ({ ...current, new_beneficiary: event.target.checked }))
-                    }
-                  />
-                </label>
-                <button
-                  className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3.5 font-bold text-white transition-all duration-300 hover:from-blue-500 hover:to-indigo-500 hover:shadow-[0_0_20px_rgba(31,111,235,0.4)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={loading}
-                  onClick={() => evaluate(payload, { interactive: true, alert: true })}
-                  type="button"
-                >
-                  {loading ? "Evaluating..." : "Initiate Secure Transfer"}
-                </button>
-              </div>
-
-              {alert ? (
-                <div className={`mt-5 rounded-xl border p-4 shadow-sm transition-all duration-500 ${alert.tone}`}>
-                  <div className="flex items-start gap-3">
-                    {alert.title === "Transaction Approved" ? (
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                    ) : (
-                      <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                    )}
-                    <div>
-                      <p className="font-bold text-sm">{alert.title}</p>
-                      <p className="mt-1 text-xs font-medium opacity-90 leading-relaxed">{alert.body}</p>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <button
-                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] transition-all hover:border-emerald-500/25 text-center cursor-pointer"
-                  onClick={() => applyScenario("normal")}
-                >
-                  <span className="text-xs font-bold text-emerald-400">Normal</span>
-                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 5k (Allow)</span>
-                </button>
-                <button
-                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-500/15 bg-amber-500/5 hover:bg-amber-500/10 transition-all hover:border-amber-500/30 text-center cursor-pointer"
-                  onClick={() => applyScenario("suspicious")}
-                >
-                  <span className="text-xs font-bold text-amber-400">Suspicious</span>
-                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 500k (OTP)</span>
-                </button>
-                <button
-                  className="flex flex-col items-center justify-center p-3 rounded-xl border border-red-500/15 bg-red-500/5 hover:bg-red-500/10 transition-all hover:border-red-500/30 text-center cursor-pointer"
-                  onClick={() => applyScenario("critical")}
-                >
-                  <span className="text-xs font-bold text-red-400">Critical</span>
-                  <span className="text-[10px] font-semibold text-slate-300 mt-1">INR 1M (Block)</span>
-                </button>
-              </div>
+              <ScoreMeter score={score} riskLevel={riskLevel} />
             </div>
 
-            <div className="glass-card p-5">
-              <div className="mb-5 flex items-center gap-3">
-                <Fingerprint className="h-5 w-5 text-blue-400" />
-                <h2 className="text-xl font-bold tracking-tight">Explainable AI Panel</h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm font-bold text-blue-300">
+                <Fingerprint className="h-4 w-4" />
+                <span>Explainable AI Engine</span>
               </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 flex justify-between items-center">
+              <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 flex justify-between items-center text-xs">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Evaluated Score</p>
-                  <p className="mt-2 text-4xl font-extrabold tracking-tight">{score}</p>
+                  <span className="text-slate-400 font-semibold">Recommended Action:</span>
+                  <p className="mt-1 font-bold text-sm text-blue-300">{result?.recommended_action ?? "Allow"}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Recommended Action</p>
-                  <p className="mt-2 text-sm font-bold text-blue-300">{result?.recommended_action ?? "Allow"}</p>
-                </div>
+                {result?.anomaly_detected ? (
+                  <div className="text-right text-red-400 font-bold border border-red-500/20 bg-red-500/5 px-2.5 py-1.5 rounded-lg">
+                    Behavior Anomaly
+                  </div>
+                ) : null}
               </div>
-              <div className="mt-5">
-                <p className="mb-3.5 text-xs font-bold uppercase tracking-wider text-slate-300 opacity-90">Risk Deductions & Reasons</p>
-                <ul className="space-y-2.5">
+              <div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Decision Logic & Reasons</p>
+                <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
                   {reasonList.map((reason) => (
-                    <li className="rounded-xl border border-white/5 bg-white/[0.015] p-3 text-xs font-semibold text-slate-300 leading-normal flex items-start gap-2.5" key={reason}>
+                    <li className="rounded-xl border border-white/5 bg-white/[0.015] p-2.5 text-xs font-semibold text-slate-300 leading-normal flex items-start gap-2" key={reason}>
                       <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0" />
                       <span>{reason}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              {result?.anomaly_detected ? (
-                <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-xs font-bold text-red-200 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-                  Behavioral Anomaly Warning: Session signals deviate significantly from historical patterns.
-                </div>
-              ) : null}
             </div>
           </div>
 
-          <div className="glass-card p-5">
-            <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-center gap-3">
-                <LineChart className="h-5 w-5 text-blue-400" />
-                <div>
-                  <h2 className="text-xl font-bold tracking-tight">Fraud Monitoring Dashboard</h2>
-                  <p className="text-xs font-semibold text-slate-300 mt-0.5">Transaction risk points: <span className="text-blue-300 font-bold">{transactionRisk ? `${transactionRisk} pts` : "Normal"}</span></p>
-                </div>
-              </div>
-              <div className="grid gap-4 text-xs font-semibold text-slate-300 sm:grid-cols-2">
-                <label className="flex flex-col gap-1.5">
-                  <span>Login Time: <code className="text-blue-300 font-bold">{session.login_time}:00</code></span>
-                  <input
-                    max="23"
-                    min="0"
-                    type="range"
-                    value={session.login_time}
-                    onChange={(event) => setSession((current) => ({ ...current, login_time: Number(event.target.value) }))}
-                  />
-                </label>
-                <label className="flex flex-col gap-1.5">
-                  <span>Session Duration: <code className="text-blue-300 font-bold">{session.session_duration_minutes} min</code></span>
-                  <input
-                    max="180"
-                    min="1"
-                    type="range"
-                    value={session.session_duration_minutes}
-                    onChange={(event) =>
-                      setSession((current) => ({ ...current, session_duration_minutes: Number(event.target.value) }))
-                    }
-                  />
-                </label>
+          {/* Fraud Risk Analytics Charts */}
+          <div className="glass-card p-6 space-y-5">
+            <div className="flex items-center gap-2">
+              <LineChart className="h-5 w-5 text-blue-400" />
+              <div>
+                <h2 className="text-xl font-bold tracking-tight">Fraud Analytics Dashboard</h2>
               </div>
             </div>
 
-            {error ? (
-              <div className="mb-5 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm font-semibold text-red-200">
-                {error}
-              </div>
-            ) : null}
-
             <div className="grid gap-5 lg:grid-cols-3">
               <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-300 opacity-90">Trust Score Trend</p>
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Trust Score Trend</p>
                 <div className="chart-surface">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={result?.analytics?.trust_score_trend || []}>
@@ -614,8 +621,8 @@ function Dashboard() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-                      <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 10, fontWeight: 600 }} />
-                      <YAxis domain={[0, 100]} stroke="#64748b" tick={{ fontSize: 10, fontWeight: 600 }} />
+                      <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 9, fontWeight: 600 }} />
+                      <YAxis domain={[0, 100]} stroke="#64748b" tick={{ fontSize: 9, fontWeight: 600 }} />
                       <Tooltip contentStyle={{ background: "#0b274a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", boxShadow: "0 10px 25px rgba(0,0,0,0.5)" }} />
                       <Area dataKey="score" fill="url(#scoreGradient)" stroke="#60a5fa" strokeWidth={2} />
                     </AreaChart>
@@ -624,16 +631,16 @@ function Dashboard() {
               </div>
 
               <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-300 opacity-90">Risk Distribution</p>
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Risk Distribution</p>
                 <div className="chart-surface">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={result?.analytics?.risk_distribution || []}
                         dataKey="value"
-                        innerRadius={50}
+                        innerRadius={40}
                         nameKey="name"
-                        outerRadius={80}
+                        outerRadius={70}
                         paddingAngle={4}
                       >
                         {(result?.analytics?.risk_distribution || []).map((entry, index) => (
@@ -647,13 +654,13 @@ function Dashboard() {
               </div>
 
               <div>
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-300 opacity-90">Transaction Activity</p>
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-300 opacity-90">Transaction Activity</p>
                 <div className="chart-surface">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={result?.analytics?.transaction_activity || []}>
                       <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-                      <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 10, fontWeight: 600 }} />
-                      <YAxis stroke="#64748b" tick={{ fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => `${Math.round(value / 1000)}k`} />
+                      <XAxis dataKey="time" stroke="#64748b" tick={{ fontSize: 9, fontWeight: 600 }} />
+                      <YAxis stroke="#64748b" tick={{ fontSize: 9, fontWeight: 600 }} tickFormatter={(value) => `${Math.round(value / 1000)}k`} />
                       <Tooltip
                         contentStyle={{ background: "#0b274a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", boxShadow: "0 10px 25px rgba(0,0,0,0.5)" }}
                         formatter={(value) => currency.format(value)}
