@@ -77,6 +77,11 @@ select {
   color: rgba(226, 232, 240, 0.45);
 }
 
+select.field option {
+  background-color: #0b274a;
+  color: white;
+}
+
 .control-label {
   display: flex;
   align-items: center;
